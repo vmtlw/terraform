@@ -14,6 +14,7 @@ terraform output -json > ips.json
 systemctl disable --now apparmor ## для применения изменений уходим в reboot
 systemctl enable --now libvirtd 
 terraform apply -auto-approve
+qemu-img convert -O qcow2 /var/lib/libvirt/images/node0_resized.img /var/lib/libvirt/images/node0_flat.img
 ```
 
 ### Удалить созданное хозяйство:
