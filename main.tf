@@ -1,43 +1,28 @@
 terraform {
   required_providers {
     libvirt = {
-      source  = "dmacvicar/libvirt"
-      version = ">= 0.6.3"
-    }
-    template = {
-      source  = "hashicorp/template"
-      version = "~> 2.2.0"
+      source = "dmacvicar/libvirt"
     }
   }
 }
+
 
 provider "libvirt" {
   uri = "qemu:///system"
 }
 
-variable "vm_memory" {
-  default = 2048
-}
-
-variable "vm_vcpu" {
-  default = 2
-}
-
-variable "vm_image" {
-  default = "/tmp/debian-12.qcow2"
-}
 
 resource "libvirt_volume" "vm_disk" {
   count  = var.vm_count
-  name   = "k8s-${count.index}.qcow2"
+  name   = "node${count.index}.qcow2"
   pool   = "default"
-  source = var.vm_image
+  source = var.base_img_url
   format = "qcow2"
 }
 
 data "template_file" "user_data" {
   count    = var.vm_count
-  template = file("${path.module}/cloud_init.cfg")
+  template = file("${path.module}/cloud_init.yml")
   vars = {
     hostname = "k8s-${count.index}"
   }
@@ -45,14 +30,14 @@ data "template_file" "user_data" {
 
 resource "libvirt_cloudinit_disk" "cloudinit" {
   count     = var.vm_count
-  name      = "cloudinit-${count.index}.iso"
+  name      = "cloudinit-node${count.index}.iso"
   user_data = data.template_file.user_data[count.index].rendered
   pool      = "default"
 }
 
 resource "libvirt_domain" "k8s_vm" {
   count     = var.vm_count
-  name      = "k8s-${count.index}"
+  name      = "node${count.index}"
   memory    = var.vm_memory
   vcpu      = var.vm_vcpu
   autostart = true

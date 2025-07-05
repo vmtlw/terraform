@@ -13,3 +13,15 @@ chpasswd:
     debian:debian
   expire: False
 
+growpart:
+  mode: auto
+  devices: ["/"]
+  ignore_growroot_disabled: false
+
+package_update: true
+package_upgrade: true
+packages:
+  - qemu-guest-agent
+
+runcmd:
+  - [ systemctl, start, qemu-guest-agent ]
