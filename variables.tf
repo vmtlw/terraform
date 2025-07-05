@@ -1,5 +1,5 @@
 variable "vm_count" {
-  default = 4
+  default = 1
 }
 
 variable "vm_memory" {
