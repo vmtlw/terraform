@@ -11,7 +11,7 @@ wget -O /tmp/debian-12.qcow2 https://cloud.debian.org/images/cloud/bookworm/late
 terraform init
 terraform validate
 terraform output -json > ips.json
-systemctl disable --now apparmor
-systemctl enable --now libvirtd
+systemctl disable --now apparmor ## для применения изменений уходим в reboot
+systemctl enable --now libvirtd 
 terraform apply -auto-approve
 ```
