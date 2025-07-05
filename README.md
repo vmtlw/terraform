@@ -15,3 +15,16 @@ systemctl disable --now apparmor ## для применения изменени
 systemctl enable --now libvirtd 
 terraform apply -auto-approve
 ```
+
+### Удалить созданное хозяйство:
+```
+terraform destroy -auto-approve
+for vm in k8s-0 k8s-1 k8s-2 k8s-3
+do
+  virsh destroy $vm
+  virsh undefine $vm
+  rm /var/lib/libvirt/images/$vm.qcow2
+done
+
+  rm /var/lib/libvirt/images/cloudinit-*
+```
